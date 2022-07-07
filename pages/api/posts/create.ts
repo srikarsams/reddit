@@ -29,11 +29,17 @@ export default async function handler(
 
     const post = await db.post.create({
       data: {
-        ...validated,
+        title: validated.title,
+        body: validated.body,
         slug,
         author: {
           connect: {
             username: user.username,
+          },
+        },
+        sub: {
+          connect: {
+            name: validated.subName,
           },
         },
       },

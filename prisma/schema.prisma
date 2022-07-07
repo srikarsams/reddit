@@ -19,6 +19,7 @@ model User {
   password  String
 
   posts Post[]
+  subs  Sub[]
 
   @@index([email, username])
 }
@@ -32,9 +33,28 @@ model Post {
   title      String
   slug       String  @unique
   body       String?
-  subName    String
 
   author     User   @relation(fields: [authorName], references: [username], onDelete: Cascade, onUpdate: Cascade)
   authorName String
+
+  sub     Sub    @relation(fields: [subName], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  subName String
+
   @@index([identifier, slug])
+}
+
+model Sub {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  name        String  @unique
+  description String?
+  imageUrn    String?
+  bannerUrn   String?
+  posts       Post[]
+
+  creator     User   @relation(fields: [creatorName], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  creatorName String
+
+  @@index([name])
 }
