@@ -2,7 +2,7 @@
 import { Post } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import { db } from '../../../prisma';
+import { db } from '../../../../prisma';
 
 export default async function handler(
   req: NextApiRequest,
