@@ -5,6 +5,7 @@ module.exports = {
     './components/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
+    container: false,
     fontFamily: {
       body: ['IBM Plex Sans'],
     },
@@ -37,5 +38,18 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addComponents }) {
+      addComponents({
+        '.container': {
+          width: '100%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          '@screen sm': {maxWidth: '640px'},
+          '@screen md': {maxWidth: '768px'},
+          '@screen lg': {maxWidth: '975px'},
+        },
+      });
+    },
+  ],
 };

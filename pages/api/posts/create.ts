@@ -9,10 +9,10 @@ import { authCheck } from '../../../utils/auth-check';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Post | { error: string } | { message: string }>
+  res: NextApiResponse<Post | { error: string }>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ message: 'Only POST requests allowed' });
+    res.status(405).send({ error: 'Only POST requests allowed' });
     return;
   }
 

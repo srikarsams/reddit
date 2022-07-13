@@ -8,10 +8,10 @@ import { authCheck } from '../../../utils/auth-check';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Sub | { error: string } | { message: string }>
+  res: NextApiResponse<Sub | { error: string }>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ message: 'Only POST requests allowed' });
+    res.status(405).send({ error: 'Only POST requests allowed' });
     return;
   }
 
@@ -32,7 +32,7 @@ export default async function handler(
       subByName?.length &&
       subByName[0].name?.toLowerCase() === validated.name.toLowerCase()
     ) {
-      res.status(400).json({ message: 'Sub already exists' });
+      res.status(400).json({ error: 'Sub already exists' });
       return;
     }
 

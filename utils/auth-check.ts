@@ -8,7 +8,7 @@ import { db } from '../prisma';
 export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   const { cookies } = req;
   if (!cookies.token) {
-    res.status(401).json({ message: 'Unauthenticated' });
+    res.status(401).json({ error: 'Unauthenticated' });
     return;
   }
 
@@ -18,7 +18,7 @@ export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!jwtPayload?.username) {
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ error: 'Invalid token' });
     return;
   }
 
@@ -29,7 +29,7 @@ export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   });
 
   if (!user) {
-    res.status(401).json({ message: 'user not found' });
+    res.status(401).json({ error: 'user not found' });
     return;
   }
 

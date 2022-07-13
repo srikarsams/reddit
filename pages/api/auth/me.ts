@@ -6,12 +6,10 @@ import { authCheck } from '../../../utils/auth-check';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    Partial<User> | { message: string; path?: string[] } | { error: string }
-  >
+  res: NextApiResponse<Partial<User> | { error: string }>
 ) {
   if (req.method !== 'GET') {
-    res.status(405).send({ message: 'Only GET requests allowed' });
+    res.status(405).send({ error: 'Only GET requests allowed' });
     return;
   }
 

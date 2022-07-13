@@ -8,9 +8,7 @@ import { authCheck } from '../../../../utils/auth-check';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    Comment | { comments: Comment[] } | { error: string } | { message: string }
-  >
+  res: NextApiResponse<Comment | { comments: Comment[] } | { error: string }>
 ) {
   const user = await authCheck(req, res);
   if (!user) {
@@ -54,7 +52,7 @@ export default async function handler(
     return;
   }
 
-  res.status(405).send({ message: 'Only POST requests allowed' });
+  res.status(405).send({ error: 'Only POST requests allowed' });
 }
 
 const CommentPayloadValidator = z.object({
