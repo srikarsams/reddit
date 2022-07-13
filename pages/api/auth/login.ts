@@ -8,6 +8,9 @@ import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 
 import { db } from '../../../prisma';
+import { APIError } from '../../../types';
+
+import { transformZodError } from '../../../utils/zod-error-transformer';
 
 const LoginPayloadValidator = z.object({
   username: z.string().min(1, { message: 'Username is missing' }),
@@ -20,14 +23,10 @@ function validateRequestBody(data: User) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    | Partial<User>
-    | { message: string; path?: string[] }
-    | { error: ZodError | string }
-  >
+  res: NextApiResponse<Partial<User> | APIError>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ message: 'Only POST requests allowed' });
+    res.status(405).send({ errors: { form: 'Only POST requests allowed' } });
     return;
   }
 
@@ -43,8 +42,9 @@ export default async function handler(
     // if user is not found
     if (!user) {
       res.status(404).json({
-        message: "Username doesn't exist",
-        path: ['username'],
+        errors: {
+          username: "Username doesn't exist",
+        },
       });
       return;
     }
@@ -52,8 +52,9 @@ export default async function handler(
     // if the password doen't match with the one in DB
     if (!compareSync(validated.password, user.password)) {
       res.status(401).json({
-        message: 'Invalid password',
-        path: ['password'],
+        errors: {
+          password: 'Invalid password',
+        },
       });
       return;
     }
@@ -73,13 +74,16 @@ export default async function handler(
         path: '/',
       })
     );
-    res.status(200).json({ message: 'login successful' });
+    res.status(200).json({
+      ...user,
+      password: undefined,
+    });
     return;
   } catch (err) {
     if (err instanceof ZodError) {
-      res.status(401).json({ error: err });
+      res.status(401).json(transformZodError(err));
       return;
     }
-    res.status(500).json({ error: (err as Error).message });
+    res.status(500).json({ errors: { form: (err as Error).message } });
   }
 }

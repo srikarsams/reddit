@@ -1,15 +1,17 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import type { APIError } from '../../../types';
 import type { User } from '@prisma/client';
 
 import { z, ZodError } from 'zod';
 import { hashSync } from 'bcrypt';
 
 import { db } from '../../../prisma';
+import { transformZodError } from '../../../utils/zod-error-transformer';
 
 const saltRounds = 10;
 
-const UserValidator = z.object({
+export const UserValidator = z.object({
   username: z
     .string()
     .min(3, { message: 'username must be min. 3 characters long' }),
@@ -36,14 +38,10 @@ function validateRequestBody(data: User) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<
-    | Partial<User>
-    | { message: string; path?: string[] }
-    | { error: ZodError | string }
-  >
+  res: NextApiResponse<Partial<User> | APIError>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ message: 'Only POST requests allowed' });
+    res.status(405).send({ errors: { form: 'Only POST requests allowed' } });
     return;
   }
 
@@ -58,8 +56,9 @@ export default async function handler(
 
     if (userByUsername) {
       res.status(401).json({
-        message: 'Username already exists',
-        path: ['username'],
+        errors: {
+          username: 'Username already exists',
+        },
       });
       return;
     }
@@ -71,9 +70,7 @@ export default async function handler(
     });
 
     if (userByEmail) {
-      res
-        .status(401)
-        .json({ message: 'Email already exists', path: ['email'] });
+      res.status(401).json({ errors: { email: 'Email already exists' } });
       return;
     }
 
@@ -94,9 +91,9 @@ export default async function handler(
     res.status(200).json(user);
   } catch (err) {
     if (err instanceof ZodError) {
-      res.status(401).json({ error: err });
+      res.status(401).json(transformZodError(err));
       return;
     }
-    res.status(500).json({ error: (err as Error).message });
+    res.status(500).json({ errors: { form: (err as Error).message } });
   }
 }
