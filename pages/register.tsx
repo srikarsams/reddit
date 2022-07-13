@@ -48,7 +48,7 @@ const Register: NextPage = () => {
   }
 
   return (
-    <div className="flex">
+    <div className="flex bg-white">
       <Head>
         <title>Register</title>
       </Head>
