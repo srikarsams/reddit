@@ -8,6 +8,7 @@ import { APIError } from '../types';
 
 import { Input } from '../components/input/index';
 import { User } from '@prisma/client';
+import { useAuthState } from '../components/context';
 
 const Register: NextPage = () => {
   const [email, setEmail] = useState('');
@@ -17,6 +18,12 @@ const Register: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+  const authState = useAuthState();
+
+  if (authState.authenticated) {
+    router.replace('/');
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

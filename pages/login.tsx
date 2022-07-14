@@ -8,14 +8,25 @@ import { APIError } from '../types';
 
 import { Input } from '../components/input/index';
 import { User } from '@prisma/client';
+import {
+  ACTION_CONSTANTS,
+  useAuthDispatch,
+  useAuthState,
+} from '../components/context';
 
 const Login: NextPage = () => {
-  const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('coladola');
+  const [username, setUsername] = useState('coladola');
   const [errObject, setErrObject] = useState<APIError>();
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+  const dispatch = useAuthDispatch();
+  const authState = useAuthState();
+
+  if (authState.authenticated) {
+    router.replace('/');
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -39,6 +50,7 @@ const Login: NextPage = () => {
       if ((api_response as APIError)?.errors) {
         setErrObject(api_response as APIError);
       } else if ((api_response as User)?.email) {
+        dispatch({ type: ACTION_CONSTANTS.LOGGED_IN, payload: api_response });
         router.replace('/');
       }
     } catch (err) {
