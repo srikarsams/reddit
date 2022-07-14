@@ -2,18 +2,51 @@
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Post } from '@prisma/client';
 
 import { ActionButton } from '../action-button';
+import { ArrayElement } from '../../types';
+import { PostsWithVoteScore } from '../../pages/api/posts';
 
 dayjs.extend(relativeTime);
 
-export function PostCard({ post }: { post: Post }) {
+const voteHandler = async (id: string, value: number) => {
+  try {
+    const res = await fetch('/api/vote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ postId: id, value }),
+    });
+  } catch (error) {}
+};
+
+type PostWithVoteScoreAndUserVote = ArrayElement<PostsWithVoteScore> & {
+  userVote: number;
+};
+
+export function PostCard({ post }: { post: PostWithVoteScoreAndUserVote }) {
   const postUrl = `/r/${post.subName}/${post.slug}`;
   return (
     <div className="mb-4 flex rounded bg-white">
       <div className="w-10 rounded-l bg-gray-200 text-center">
-        <p>V</p>
+        <div
+          className={`mx-auto w-6 cursor-pointer rounded text-gray-400 hover:bg-gray-300 hover:text-red-500 ${
+            post.userVote === 1 ? `text-red-500` : ''
+          }`}
+          onClick={() => voteHandler(post.identifier, 1)}
+        >
+          <i className="icon-arrow-up"></i>
+        </div>
+        <p className="text-xs font-bold">{post._count.votes}</p>
+        <div
+          className={`mx-auto w-6 cursor-pointer rounded text-gray-400 hover:bg-gray-300 hover:text-blue-600 ${
+            post.userVote === -1 ? `text-blue-600` : ''
+          }`}
+          onClick={() => voteHandler(post.identifier, -1)}
+        >
+          <i className="icon-arrow-down"></i>
+        </div>
       </div>
 
       <div className="flex flex-grow flex-col p-2">
@@ -53,7 +86,10 @@ export function PostCard({ post }: { post: Post }) {
             <a>
               <ActionButton>
                 <i className="fas fa-comment-alt fa-xs"></i>
-                <span className="ml-1 text-sm font-semibold">120 Comments</span>
+                <span className="ml-1 text-sm font-semibold">
+                  {post._count.comments}{' '}
+                  {post._count.comments === 1 ? 'Comment' : 'Comments'}
+                </span>
               </ActionButton>
             </a>
           </Link>

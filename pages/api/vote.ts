@@ -5,6 +5,8 @@ import { z } from 'zod';
 
 import { db } from '../../prisma';
 import { authCheck } from '../../utils/auth-check';
+import { fetchPost } from '../../utils/fetch-post';
+import { setUserVote } from '../../utils/set-user-vote';
 
 type CommentWithUserVote = Comment & {
   userVote: number;
@@ -37,7 +39,6 @@ export default async function handler(
             postId: validated.postId,
           },
         });
-
         // if no vote and value is 0, invalid scenario since we can't reset the vote if it doesn't exist
         if (!vote && validated.value === 0) {
           res.status(404).json({ error: 'Vote not found' });
@@ -155,63 +156,3 @@ const VotePayloadValidator = z
       });
     }
   });
-
-async function fetchPost(whereObj: { identifier?: string; slug?: string }) {
-  return await db.post.findUniqueOrThrow({
-    where: whereObj,
-    include: {
-      votes: true,
-      comments: {
-        include: {
-          votes: true,
-          _count: {
-            select: {
-              votes: true,
-            },
-          },
-        },
-      },
-      _count: {
-        select: {
-          votes: true,
-        },
-      },
-    },
-  });
-}
-
-// sets userVote for post and it's associated comments
-function setUserVote(post: Awaited<ReturnType<typeof fetchPost>>, user: User) {
-  // calculate the vote score for each post and remove votes data for post
-  post._count.votes = post.votes.reduce(
-    (acc, initial) => acc + initial.value,
-    0
-  );
-
-  // check whether this user has voted the post
-  const userVoteIndex = post.votes.findIndex(
-    (vote) => vote.username === user.username
-  );
-  const userVote = userVoteIndex > -1 ? post.votes[userVoteIndex].value : 0;
-
-  // calculate the vote score for each comment and remove votes data from each comment
-  const comments = post.comments.map((comment) => {
-    comment._count.votes = comment.votes.reduce(
-      (acc, initial) => acc + initial.value,
-      0
-    );
-
-    // check whether this user has voted the comment
-    const commentUserVoteIndex = comment.votes.findIndex(
-      (vote) => vote.username === user.username
-    );
-
-    const commentUserVote =
-      commentUserVoteIndex > -1 ? comment.votes[commentUserVoteIndex].value : 0;
-    comment.votes = [];
-    return { ...comment, userVote: commentUserVote };
-  });
-
-  post.votes = [];
-  return { ...post, userVote, comments };
-}

@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextApiRequest } from 'next';
 
 import { db } from '../prisma';
 
-export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
+export const fetchUserFromToken = async (req: NextApiRequest) => {
   const { cookies } = req;
+
   if (!cookies.token) {
-    res.status(401).json({ error: 'Unauthenticated' });
-    return;
+    return null;
   }
 
   const jwtPayload: any = jwt.verify(
@@ -16,8 +16,7 @@ export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
   );
 
   if (!jwtPayload?.username) {
-    res.status(401).json({ error: 'Invalid token' });
-    return;
+    return null;
   }
 
   const user = await db.user.findUnique({
@@ -25,11 +24,6 @@ export const authCheck = async (req: NextApiRequest, res: NextApiResponse) => {
       username: jwtPayload.username,
     },
   });
-
-  if (!user) {
-    res.status(401).json({ error: 'user not found' });
-    return;
-  }
 
   return user;
 };

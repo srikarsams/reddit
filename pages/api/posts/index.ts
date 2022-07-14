@@ -3,6 +3,9 @@ import { Post } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { db } from '../../../prisma';
+import { ArrayElement } from '../../../types';
+import { fetchUserFromToken } from '../../../utils/fetch-user-from-token';
+import { setUserVoteForPost } from '../../../utils/set-user-vote';
 
 export default async function handler(
   req: NextApiRequest,
@@ -14,31 +17,12 @@ export default async function handler(
   }
 
   try {
-    let posts = await db.post.findMany({
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        votes: true,
-        _count: {
-          select: {
-            comments: true,
-            votes: true,
-          },
-        },
-      },
-    });
+    const user = await fetchUserFromToken(req);
+    let posts = await fetchPosts();
 
     // calculate the vote score for each post and remove votes data
     posts = posts.map((post) => {
-      post._count.votes = post.votes.reduce(
-        (acc, initial) => acc + initial.value,
-        0
-      );
-      return {
-        ...post,
-        votes: [],
-      };
+      return setUserVoteForPost(post, user) as ArrayElement<PostsWithVoteScore>;
     });
 
     res.status(200).json({ posts });
@@ -47,3 +31,23 @@ export default async function handler(
     res.status(500).json({ error: (err as Error).message });
   }
 }
+
+async function fetchPosts() {
+  return await db.post.findMany({
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      votes: true,
+      sub: true,
+      _count: {
+        select: {
+          comments: true,
+          votes: true,
+        },
+      },
+    },
+  });
+}
+
+export type PostsWithVoteScore = Awaited<ReturnType<typeof fetchPosts>>;
