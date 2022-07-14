@@ -14,10 +14,31 @@ export default async function handler(
   }
 
   try {
-    const posts = await db.post.findMany({
+    let posts = await db.post.findMany({
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        votes: true,
+        _count: {
+          select: {
+            comments: true,
+            votes: true,
+          },
+        },
+      },
+    });
+
+    // calculate the vote score for each post and remove votes data
+    posts = posts.map((post) => {
+      post._count.votes = post.votes.reduce(
+        (acc, initial) => acc + initial.value,
+        0
+      );
+      return {
+        ...post,
+        votes: [],
+      };
     });
 
     res.status(200).json({ posts });

@@ -18,9 +18,11 @@ model User {
   username  String  @unique
   password  String
 
-  posts    Post[]
-  subs     Sub[]
-  comments Comment[]
+  posts        Post[]
+  subs         Sub[]
+  comments     Comment[]
+  postVotes    PostVote[]
+  commentVotes CommentVote[]
 
   @@index([email, username])
 }
@@ -30,11 +32,12 @@ model Post {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  identifier String    @unique @default(cuid())
+  identifier String     @unique @default(cuid())
   title      String
-  slug       String    @unique
+  slug       String     @unique
   body       String?
   comments   Comment[]
+  votes      PostVote[]
 
   author     User   @relation(fields: [authorName], references: [username], onDelete: Cascade, onUpdate: Cascade)
   authorName String
@@ -66,7 +69,8 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  body String
+  body  String
+  votes CommentVote[]
 
   author     User   @relation(fields: [authorName], references: [username], onDelete: Cascade, onUpdate: Cascade)
   authorName String
@@ -74,4 +78,36 @@ model Comment {
   postSlug   String
 
   @@index([id])
+}
+
+model PostVote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  value Int
+
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  username String
+
+  post   Post   @relation(fields: [postId], references: [identifier], onDelete: Cascade, onUpdate: Cascade)
+  postId String
+
+  @@index([id, postId])
+}
+
+model CommentVote {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  value Int
+
+  user     User   @relation(fields: [username], references: [username], onDelete: Cascade, onUpdate: Cascade)
+  username String
+
+  comment   Comment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  commentId String
+
+  @@index([id, commentId])
 }
