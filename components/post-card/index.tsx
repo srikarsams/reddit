@@ -21,7 +21,7 @@ const voteHandler = async (id: string, value: number) => {
   } catch (error) {}
 };
 
-type PostWithVoteScoreAndUserVote = ArrayElement<PostsWithVoteScore> & {
+export type PostWithVoteScoreAndUserVote = ArrayElement<PostsWithVoteScore> & {
   userVote: number;
 };
 
@@ -29,7 +29,7 @@ export function PostCard({ post }: { post: PostWithVoteScoreAndUserVote }) {
   const postUrl = `/r/${post.subName}/${post.slug}`;
   return (
     <div className="mb-4 flex rounded bg-white">
-      <div className="w-10 rounded-l bg-gray-200 text-center">
+      <div className="w-10 flex-shrink-0 rounded-l bg-gray-200 text-center">
         <div
           className={`mx-auto w-6 cursor-pointer rounded text-gray-400 hover:bg-gray-300 hover:text-red-500 ${
             post.userVote === 1 ? `text-red-500` : ''
@@ -84,7 +84,7 @@ export function PostCard({ post }: { post: PostWithVoteScoreAndUserVote }) {
         <div className="flex items-center">
           <Link href={postUrl}>
             <a>
-              <ActionButton>
+              <ActionButton negativeMargin>
                 <i className="fas fa-comment-alt fa-xs"></i>
                 <span className="ml-1 text-sm font-semibold">
                   {post._count.comments}{' '}

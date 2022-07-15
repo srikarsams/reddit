@@ -1,38 +1,24 @@
 /* eslint-disable @next/next/no-img-element */
 import type { NextPage } from 'next';
-import { useEffect, useState } from 'react';
 import Head from 'next/head';
+import useSWR from 'swr';
 
-import { PostCard } from '../components/post-card';
-import { PostsWithVoteScore } from './api/posts';
+import {
+  PostCard,
+  PostWithVoteScoreAndUserVote,
+} from '../components/post-card';
 
 const Home: NextPage = () => {
-  const [posts, setPosts] = useState<PostsWithVoteScore>([]);
-  const [error, setError] = useState<{ error: string } | null>(null);
-
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        const api_res: { posts: PostsWithVoteScore } | { error: string } =
-          await fetch('/api/posts').then((res) => res.json());
-        if ((api_res as { posts: PostsWithVoteScore })?.posts) {
-          setPosts((api_res as { posts: PostsWithVoteScore }).posts);
-        } else {
-          setError(api_res as { error: string });
-        }
-      } catch (err) {
-        console.log('something went wrong');
-      }
-    }
-    fetchPosts();
-  }, []);
+  const { data: posts } = useSWR<{ posts: PostWithVoteScoreAndUserVote[] }>(
+    '/api/posts'
+  );
 
   return (
     <div className="pt-12">
       <Head>Reddiit: the front page of the internet</Head>
       <div className="container flex pt-4">
         <div className="w-160">
-          {posts.map((post) => {
+          {posts?.posts?.map((post) => {
             return <PostCard post={post} key={post.id} />;
           })}
         </div>
