@@ -14,7 +14,7 @@ const Home: NextPage = () => {
   );
 
   return (
-    <div className="pt-12">
+    <>
       <Head>Reddiit: the front page of the internet</Head>
       <div className="container flex pt-4">
         <div className="w-160">
@@ -23,7 +23,7 @@ const Home: NextPage = () => {
           })}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

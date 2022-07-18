@@ -15,8 +15,8 @@ import {
 } from '../components/context';
 
 const Login: NextPage = () => {
-  const [password, setPassword] = useState('coladola');
-  const [username, setUsername] = useState('coladola');
+  const [password, setPassword] = useState('123456');
+  const [username, setUsername] = useState('john');
   const [errObject, setErrObject] = useState<APIError>();
   const [isLoading, setIsLoading] = useState(false);
 
