@@ -9,6 +9,7 @@ import {
   PostCard,
   PostWithVoteScoreAndUserVote,
 } from '../../components/post-card';
+import { SideBar } from '../../components/side-bar';
 import { useAuthState } from '../../components/context';
 
 export default function SubPage() {
@@ -123,6 +124,7 @@ export default function SubPage() {
                 ))}
               </div>
             )}
+            <SideBar sub={data} />
           </div>
         </>
       ) : null}
