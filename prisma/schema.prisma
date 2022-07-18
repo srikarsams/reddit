@@ -53,6 +53,7 @@ model Sub {
   createdAt DateTime @default(now())
 
   name        String  @unique
+  title       String
   description String?
   imageUrn    String?
   bannerUrn   String?

@@ -53,6 +53,7 @@ async function main() {
       {
         name: 'reactjs',
         description: 'A group of React JS fanboys',
+        title: 'React – A JavaScript library for building user interfaces',
         creator: {
           connect: {
             username: john?.username || 's',
@@ -63,6 +64,7 @@ async function main() {
       {
         name: 'funny',
         description: 'If you cant joke your life is a joke',
+        title: 'funny',
         creator: {
           connect: {
             username: jane?.username || 's',
@@ -73,6 +75,7 @@ async function main() {
       {
         name: 'InsightfulQuestions',
         description: "Questions that make you go 'Ohhh'",
+        title: 'Insightful Questions',
         creator: {
           connect: {
             username: john?.username || 's',
@@ -84,6 +87,7 @@ async function main() {
         name: 'oneliners',
         description:
           'A variety of funny, one line jokes in a well-moderated, friendly community!',
+        title: 'Oneliners',
         creator: {
           connect: {
             username: john?.username || 's',
@@ -94,6 +98,7 @@ async function main() {
       {
         name: 'readyplayerone',
         description: 'Your nexus for all things Ready Player One',
+        title: 'Ready Player One',
         creator: {
           connect: {
             username: jane?.username || 's',
@@ -103,6 +108,7 @@ async function main() {
       },
       {
         name: 'reallyannoyingsounds',
+        title: 'Creaky Sneaky sounds',
         description: 'Ahhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh',
         creator: {
           connect: {
