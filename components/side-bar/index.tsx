@@ -4,12 +4,8 @@ import Link from 'next/link';
 import React from 'react';
 import { useAuthState } from '../context';
 
-import { PostWithVoteScoreAndUserVote } from '../post-card';
-
 interface SideBarProps {
-  sub: Sub & {
-    posts: PostWithVoteScoreAndUserVote[];
-  };
+  sub: Sub;
 }
 
 export function SideBar({ sub }: SideBarProps) {

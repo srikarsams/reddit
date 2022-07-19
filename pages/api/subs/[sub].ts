@@ -22,6 +22,7 @@ export default async function handler(
     const user = await fetchUserFromToken(req);
     const subRes = await fetchSubs(sub as string, user as User);
 
+    // TODO: make it reusable
     subRes.imageUrn = subRes.imageUrn
       ? `${process.env.APP_URL}/sub-images/${subRes.imageUrn}`
       : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
