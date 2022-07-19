@@ -1,11 +1,9 @@
-import { Post, Sub } from '@prisma/client';
+import { Post } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { PostsWithVoteScore } from '..';
 
 import { db } from '../../../../prisma';
-import { ArrayElement } from '../../../../types';
 import { fetchUserFromToken } from '../../../../utils/fetch-user-from-token';
-import { setUserVoteForPost } from '../../../../utils/set-user-vote';
+import { setUserVote } from '../../../../utils/set-user-vote';
 
 export default async function handler(
   req: NextApiRequest,
@@ -26,7 +24,19 @@ export default async function handler(
       include: {
         sub: true,
         votes: true,
-        comments: true,
+        comments: {
+          orderBy: {
+            createdAt: 'desc',
+          },
+          include: {
+            votes: true,
+            _count: {
+              select: {
+                votes: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             votes: true,
@@ -43,7 +53,7 @@ export default async function handler(
       ? `${process.env.APP_URL}/sub-images/${post.sub.bannerUrn}`
       : post.sub.bannerUrn;
 
-    const postWithVote = setUserVoteForPost(post, user);
+    const postWithVote = setUserVote(post, user);
 
     res.status(200).json(postWithVote);
     return;

@@ -130,6 +130,7 @@ export default async function handler(
         res.status(200).json(setUserVote(post, user));
       }
     } catch (err) {
+      console.log(err);
       res.status(500).json({ error: (err as Error).message });
     }
     return;
