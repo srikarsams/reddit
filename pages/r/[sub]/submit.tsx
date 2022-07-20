@@ -1,20 +1,28 @@
 import { Post, Sub } from '@prisma/client';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { useAuthState } from '../../../components/context';
 
 import { SideBar } from '../../../components/side-bar';
 
 export default function SubmitPage() {
   const router = useRouter();
   const subName = router.query.sub;
+  const { authenticated } = useAuthState();
   const { data: sub, error } = useSWR<Sub>(
     subName ? `/api/subs/${subName}` : null
   );
 
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+
+  useEffect(() => {
+    if (!authenticated) {
+      router.replace('/login');
+    }
+  }, [authenticated, router]);
 
   async function submitHandler(e: FormEvent) {
     e.preventDefault();
