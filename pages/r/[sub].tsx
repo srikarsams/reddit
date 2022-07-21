@@ -93,7 +93,7 @@ export default function SubPage() {
             {/* Sub Meta Data */}
             <div className="h-20 bg-white">
               <div className="container relative flex">
-                <div className="-mt-4">
+                <div className="-mt-4 pl-2 sm:pl-0">
                   <Image
                     src={data.imageUrn as string}
                     alt="Sub"
@@ -116,9 +116,9 @@ export default function SubPage() {
               </div>
             </div>
           </div>
-          <div className="container flex pt-5">
+          <div className="container flex flex-col pt-5 md:flex-row">
             {data && (
-              <div className="w-160">
+              <div className="order-2 mx-auto mt-4 basis-160 px-3 md:order-1 md:m-0 md:mt-0 md:px-0">
                 {data.posts.map((post: PostWithVoteScoreAndUserVote) => (
                   <PostCard post={post} key={post.id} />
                 ))}

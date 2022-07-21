@@ -10,7 +10,7 @@ import { SideBar } from '../../../components/side-bar';
 export default function SubmitPage() {
   const router = useRouter();
   const subName = router.query.sub;
-  const { authenticated } = useAuthState();
+  const { authenticated, loading } = useAuthState();
   const { data: sub, error } = useSWR<Sub>(
     subName ? `/api/subs/${subName}` : null
   );
@@ -19,10 +19,10 @@ export default function SubmitPage() {
   const [body, setBody] = useState('');
 
   useEffect(() => {
-    if (!authenticated) {
+    if (!authenticated && !loading) {
       router.replace('/login');
     }
-  }, [authenticated, router]);
+  }, [authenticated, router, loading]);
 
   async function submitHandler(e: FormEvent) {
     e.preventDefault();
@@ -53,11 +53,11 @@ export default function SubmitPage() {
     );
   }
   return (
-    <div className="container flex pt-5">
+    <div className="container flex flex-col pt-5 md:flex-row">
       <Head>
         <title>Submit to Reddiit</title>
       </Head>
-      <div className="w-160">
+      <div className="order-2 mx-auto mt-4 w-full basis-160 px-3 md:order-1 md:m-0 md:mt-0 md:w-auto md:px-0">
         <div className="rounded bg-white p-4">
           <h1 className="mb-3 text-lg">Submit a post to /r/{subName}</h1>
 

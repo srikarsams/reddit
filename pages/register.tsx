@@ -59,7 +59,7 @@ const Register: NextPage = () => {
       </Head>
 
       <div className="h-screen w-20 bg-register-background bg-center md:w-36"></div>
-      <div className="flex flex-col justify-center pl-6">
+      <div className="flex flex-col justify-center pl-2 sm:pl-6">
         <div className="w-70">
           <h1 className="mb-2 text-lg font-medium">Sign Up</h1>
           <p className="mb-10 text-xs leading-4">

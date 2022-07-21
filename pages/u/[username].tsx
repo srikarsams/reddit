@@ -34,18 +34,18 @@ export default function UserPage() {
     return <h1 className="mt-8 text-xl font-bold text-gray-800">No posts</h1>;
 
   return (
-    <div className="container flex pt-5">
+    <div className="container flex flex-col pt-5 md:flex-row">
       <Head>
         <title>{username}</title>
       </Head>
-      <div className="w-160">
+      <div className="order-2 mx-auto mt-4 basis-160 px-3 md:order-1 md:m-0 md:mt-0 md:px-0">
         {(data as { posts: PostWithVoteScoreAndUserVote[] }).posts.map(
           (post) => (
             <PostCard post={post} key={post.id} />
           )
         )}
       </div>
-      <div className="ml-6 w-80">
+      <div className="order-1 px-3 md:order-2 md:ml-6 md:basis-80 md:px-0">
         <div className="rounded bg-white">
           <div className="flex justify-center rounded-t bg-blue-500 p-3">
             <Image

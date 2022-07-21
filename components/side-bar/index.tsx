@@ -11,7 +11,7 @@ interface SideBarProps {
 export function SideBar({ sub }: SideBarProps) {
   const { authenticated } = useAuthState();
   return (
-    <div className="ml-6 w-80">
+    <div className="order-1 px-3 md:order-2 md:ml-6 md:basis-80 md:px-0">
       <div className="rounded bg-white">
         <div className="rounded-t bg-blue-500 p-3">
           <p className="font-semibold text-white">About Community</p>

@@ -23,13 +23,13 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>Reddiit: the front page of the internet</Head>
-      <div className="container flex pt-4">
-        <div className="w-160">
+      <div className="container flex flex-col pt-4 md:flex-row">
+        <div className="mx-auto basis-160 px-3 md:m-0 md:px-0">
           {posts?.posts?.map((post) => {
             return <PostCard post={post} key={post.id} />;
           })}
         </div>
-        <div className="ml-6 w-80">
+        <div className="px-3 md:ml-6 md:basis-80 md:px-0">
           <div className="rounded bg-white">
             <div className="border-b-2 p-4">
               <p className="text-center text-lg font-semibold">

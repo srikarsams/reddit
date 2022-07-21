@@ -97,7 +97,7 @@ export default function PostPage() {
       </Head>
       <Link href={`/r/${post?.subName}`}>
         <a>
-          <div className="flex h-20 w-full items-center bg-blue-500">
+          <div className="flex h-20 w-full items-center bg-blue-500 pl-2 sm:pl-0">
             <div className="container flex items-center">
               {post && (
                 <div className="mr-2 flex items-center rounded-full">
@@ -117,8 +117,8 @@ export default function PostPage() {
           </div>
         </a>
       </Link>
-      <div className="container flex pt-5">
-        <div className="w-160">
+      <div className="container flex flex-col pt-5 md:flex-row">
+        <div className="order-2 mx-auto mt-4 basis-160 px-3 md:order-1 md:m-0 md:mt-0 md:px-0">
           <div className="rounded bg-white">
             {post && (
               <>
@@ -215,11 +215,11 @@ export default function PostPage() {
                       </form>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-between rounded border border-gray-300 px-2 py-4">
+                    <div className="flex flex-wrap items-center justify-between rounded border border-gray-300 px-2 py-4">
                       <p className="font-semibold text-gray-400">
                         Login or Signup to leave a comment
                       </p>
-                      <div>
+                      <div className="mx-auto mt-2 lg:m-0">
                         <Link href="/login">
                           <a className="blue button mr-4 px-4 py-1 outline">
                             Login
