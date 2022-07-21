@@ -1,14 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { Sub } from '@prisma/client';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 
 import { db } from '../../../prisma';
+import { APIError, SubKeys } from '../../../types';
 import { authCheck } from '../../../utils/auth-check';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Sub | { error: string }>
+  res: NextApiResponse<Sub | { error: string } | APIError<typeof SubKeys>>
 ) {
   if (req.method !== 'POST') {
     res.status(405).send({ error: 'Only POST requests allowed' });
@@ -32,7 +33,7 @@ export default async function handler(
       subByName?.length &&
       subByName[0].name?.toLowerCase() === validated.name.toLowerCase()
     ) {
-      res.status(400).json({ error: 'Sub already exists' });
+      res.status(400).json({ fieldErrors: { name: 'Sub already exists' } });
       return;
     }
 
@@ -50,6 +51,10 @@ export default async function handler(
     res.status(200).json(sub);
     return;
   } catch (err) {
+    if (err instanceof ZodError) {
+      res.status(401).json(err.flatten());
+      return;
+    }
     res.status(500).json({ error: (err as Error).message });
   }
 }
@@ -59,4 +64,5 @@ const SubPayloadValidator = z.object({
   description: z.string().optional(),
   imageUrn: z.string().optional(),
   bannerUrn: z.string().optional(),
+  title: z.string().min(1, { message: 'Title is missing' }),
 });

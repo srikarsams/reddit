@@ -3,12 +3,13 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import useSWR from 'swr';
 import Image from 'next/image';
+import Link from 'next/link';
 
 import {
   PostCard,
   PostWithVoteScoreAndUserVote,
 } from '../components/post-card';
-import Link from 'next/link';
+import { useAuthState } from '../components/context';
 
 const Home: NextPage = () => {
   const { data: posts } = useSWR<{ posts: PostWithVoteScoreAndUserVote[] }>(
@@ -16,6 +17,8 @@ const Home: NextPage = () => {
   );
   const { data: topSubs } =
     useSWR<(Sub & { _count: { posts: number } })[]>('/api/subs/top');
+
+  const { authenticated } = useAuthState();
 
   return (
     <>
@@ -39,13 +42,15 @@ const Home: NextPage = () => {
                 key={sub.id}
               >
                 <Link href={`/r/${sub.name}`}>
-                  <Image
-                    src={sub.imageUrn as string}
-                    alt="Sub"
-                    width={(6 * 16) / 4}
-                    height={(6 * 16) / 4}
-                    className="cursor-pointer rounded-full"
-                  />
+                  <a>
+                    <Image
+                      src={sub.imageUrn as string}
+                      alt="Sub"
+                      width={(6 * 16) / 4}
+                      height={(6 * 16) / 4}
+                      className="cursor-pointer rounded-full"
+                    />
+                  </a>
                 </Link>
                 <Link href={`/r/${sub.name}`}>
                   <a className="ml-2 font-bold">r/{sub.name}</a>
@@ -53,6 +58,15 @@ const Home: NextPage = () => {
                 <p className="font-med ml-auto">{sub?._count?.posts}</p>
               </div>
             ))}
+            {authenticated ? (
+              <div className="border-t-2 p-4">
+                <Link href="/subs/create">
+                  <a className="button blue w-full px-2 py-2">
+                    Create community
+                  </a>
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

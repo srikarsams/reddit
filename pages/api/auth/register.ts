@@ -1,13 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-import type { APIError } from '../../../types';
+import type { APIError, RegisterKeys } from '../../../types';
 import type { User } from '@prisma/client';
 
 import { z, ZodError } from 'zod';
 import { hashSync } from 'bcrypt';
 
 import { db } from '../../../prisma';
-import { transformZodError } from '../../../utils/zod-error-transformer';
 
 const saltRounds = 10;
 
@@ -38,10 +37,12 @@ function validateRequestBody(data: User) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<User> | APIError>
+  res: NextApiResponse<Partial<User> | APIError<typeof RegisterKeys>>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ errors: { form: 'Only POST requests allowed' } });
+    res
+      .status(405)
+      .send({ fieldErrors: { form: 'Only POST requests allowed' } });
     return;
   }
 
@@ -56,7 +57,7 @@ export default async function handler(
 
     if (userByUsername) {
       res.status(401).json({
-        errors: {
+        fieldErrors: {
           username: 'Username already exists',
         },
       });
@@ -70,7 +71,7 @@ export default async function handler(
     });
 
     if (userByEmail) {
-      res.status(401).json({ errors: { email: 'Email already exists' } });
+      res.status(401).json({ fieldErrors: { email: 'Email already exists' } });
       return;
     }
 
@@ -91,9 +92,9 @@ export default async function handler(
     res.status(200).json(user);
   } catch (err) {
     if (err instanceof ZodError) {
-      res.status(401).json(transformZodError(err));
+      res.status(401).json(err.flatten());
       return;
     }
-    res.status(500).json({ errors: { form: (err as Error).message } });
+    res.status(500).json({ fieldErrors: { form: (err as Error).message } });
   }
 }

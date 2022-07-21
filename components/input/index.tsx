@@ -1,5 +1,4 @@
 import { ChangeEvent } from 'react';
-import { APIError, RegisterKeys } from '../../types';
 
 interface InputProps {
   name: string;

@@ -8,9 +8,7 @@ import jwt from 'jsonwebtoken';
 import cookie from 'cookie';
 
 import { db } from '../../../prisma';
-import { APIError } from '../../../types';
-
-import { transformZodError } from '../../../utils/zod-error-transformer';
+import { APIError, RegisterKeys } from '../../../types';
 
 const LoginPayloadValidator = z.object({
   username: z.string().min(1, { message: 'Username is missing' }),
@@ -23,10 +21,12 @@ function validateRequestBody(data: User) {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Partial<User> | APIError>
+  res: NextApiResponse<Partial<User> | APIError<typeof RegisterKeys>>
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send({ errors: { form: 'Only POST requests allowed' } });
+    res
+      .status(405)
+      .send({ fieldErrors: { form: 'Only POST requests allowed' } });
     return;
   }
 
@@ -42,7 +42,7 @@ export default async function handler(
     // if user is not found
     if (!user) {
       res.status(404).json({
-        errors: {
+        fieldErrors: {
           username: "Username doesn't exist",
         },
       });
@@ -52,7 +52,7 @@ export default async function handler(
     // if the password doen't match with the one in DB
     if (!compareSync(validated.password, user.password)) {
       res.status(401).json({
-        errors: {
+        fieldErrors: {
           password: 'Invalid password',
         },
       });
@@ -81,9 +81,9 @@ export default async function handler(
     return;
   } catch (err) {
     if (err instanceof ZodError) {
-      res.status(401).json(transformZodError(err));
+      res.status(401).json(err.flatten());
       return;
     }
-    res.status(500).json({ errors: { form: (err as Error).message } });
+    res.status(500).json({ fieldErrors: { form: (err as Error).message } });
   }
 }

@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 
-import { APIError } from '../types';
+import { APIError, RegisterKeys } from '../types';
 
 import { Input } from '../components/input/index';
 import { User } from '@prisma/client';
@@ -17,7 +17,7 @@ import {
 const Login: NextPage = () => {
   const [password, setPassword] = useState('123456');
   const [username, setUsername] = useState('john');
-  const [errObject, setErrObject] = useState<APIError>();
+  const [errObject, setErrObject] = useState<APIError<typeof RegisterKeys>>();
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -35,20 +35,18 @@ const Login: NextPage = () => {
     }
     try {
       setIsLoading(true);
-      const api_response: Partial<User> | APIError = await fetch(
-        '/api/auth/login',
-        {
+      const api_response: Partial<User> | APIError<typeof RegisterKeys> =
+        await fetch('/api/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ username, password }),
-        }
-      ).then((res) => res.json());
+        }).then((res) => res.json());
       setIsLoading(false);
 
-      if ((api_response as APIError)?.errors) {
-        setErrObject(api_response as APIError);
+      if ((api_response as APIError<typeof RegisterKeys>)?.fieldErrors) {
+        setErrObject(api_response as APIError<typeof RegisterKeys>);
       } else if ((api_response as User)?.email) {
         dispatch({ type: ACTION_CONSTANTS.LOGGED_IN, payload: api_response });
         router.replace('/');
@@ -80,7 +78,7 @@ const Login: NextPage = () => {
               handleOnChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setUsername(e.target.value)
               }
-              error={errObject?.errors?.username}
+              error={errObject?.fieldErrors?.username}
             />
             <Input
               name="password"
@@ -90,7 +88,7 @@ const Login: NextPage = () => {
               handleOnChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
               }
-              error={errObject?.errors?.password}
+              error={errObject?.fieldErrors?.password}
             />
             <button
               type="submit"

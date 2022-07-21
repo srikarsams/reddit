@@ -11,7 +11,9 @@ import '../styles/icons.css';
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
   const authRoute =
-    router.pathname === '/register' || router.pathname === '/login';
+    router.pathname === '/register' ||
+    router.pathname === '/login' ||
+    router.pathname === '/subs/create';
   return (
     <SWRConfig
       value={{
