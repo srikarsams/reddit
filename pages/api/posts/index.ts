@@ -24,7 +24,14 @@ export default async function handler(
 
     // calculate the vote score for each post and remove votes data
     posts = posts.map((post) => {
-      return setUserVoteForPost(post, user) as ArrayElement<PostsWithVoteScore>;
+      const newPost = setUserVoteForPost(
+        post,
+        user
+      ) as ArrayElement<PostsWithVoteScore>;
+      newPost.sub.imageUrn = newPost.sub.imageUrn
+        ? `${process.env.APP_URL}/sub-images/${newPost.sub.imageUrn}`
+        : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+      return newPost;
     });
 
     res.status(200).json(posts);

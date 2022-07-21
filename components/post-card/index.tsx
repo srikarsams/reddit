@@ -89,20 +89,27 @@ export function PostCard({
 
       <div className="flex flex-grow flex-col p-2">
         <div className="flex items-center">
-          <Link href={`/r/${post.subName}`}>
-            <img
-              src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
-              alt="avatar"
-              className="mr-1 h-4 w-4 cursor-pointer rounded-full"
-            />
-          </Link>
-          <Link href={`/r/${post.subName}`}>
-            <a className="text-xs font-bold hover:underline">
-              /r/{post.subName}
-            </a>
-          </Link>
+          {!router.pathname.includes('/r/') ? (
+            <>
+              <Link href={`/r/${post.subName}`}>
+                <img
+                  src={post.sub.imageUrn || ''}
+                  alt="avatar"
+                  className="mr-1 h-4 w-4 cursor-pointer rounded-full"
+                />
+              </Link>
+              <Link href={`/r/${post.subName}`}>
+                <a className="text-xs font-bold hover:underline">
+                  /r/{post.subName}
+                </a>
+              </Link>
+            </>
+          ) : null}
           <p className="text-xs text-gray-500">
-            <span className="mx-1">•</span>Posted by{' '}
+            {!router.pathname.includes('/r/') ? (
+              <span className="mx-1">•</span>
+            ) : null}
+            Posted by{' '}
             <Link href={`/u/${post.authorName}`}>
               <a className="hover:underline">/u/{post.authorName}</a>
             </Link>

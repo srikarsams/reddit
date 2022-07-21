@@ -19,6 +19,7 @@ const Home: NextPage = () => {
 
   const {
     data,
+    error,
     size: page,
     setSize: setPage,
     isValidating,
@@ -30,6 +31,7 @@ const Home: NextPage = () => {
     () => (data ? ([] as PostWithVoteScoreAndUserVote[]).concat(...data) : []),
     [data]
   );
+  const isInitialLoading = !data && !error;
 
   const { authenticated } = useAuthState();
   const [targetPost, setTargetPost] = useState('');
@@ -65,7 +67,7 @@ const Home: NextPage = () => {
       <Head>Reddiit: the front page of the internet</Head>
       <div className="container flex flex-col pt-4 md:flex-row">
         <div className="mx-auto basis-160 px-3 md:m-0 md:px-0">
-          {isValidating && !posts.length ? (
+          {isInitialLoading ? (
             <p className="text-center text-lg text-gray-500">Loading...</p>
           ) : null}
           {posts?.map((post) => {

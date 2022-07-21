@@ -120,7 +120,7 @@ export default function SubPage() {
             {data && (
               <div className="order-2 mx-auto mt-4 basis-160 px-3 md:order-1 md:m-0 md:mt-0 md:px-0">
                 {data.posts.map((post: PostWithVoteScoreAndUserVote) => (
-                  <PostCard post={post} key={post.id} />
+                  <PostCard post={post} key={post.id} mutate={mutate} />
                 ))}
               </div>
             )}
