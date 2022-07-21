@@ -64,7 +64,9 @@ const Home: NextPage = () => {
 
   return (
     <>
-      <Head>Reddiit: the front page of the internet</Head>
+      <Head>
+        <title>Reddiit: the front page of the internet</title>
+      </Head>
       <div className="container flex flex-col pt-4 md:flex-row">
         <div className="mx-auto basis-160 px-3 md:m-0 md:px-0">
           {isInitialLoading ? (

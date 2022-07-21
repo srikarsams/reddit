@@ -5,6 +5,19 @@ class MyDocument extends Document {
     return (
       <Html lang="en">
         <Head>
+          <meta
+            name="description"
+            content="Reddiit is a network of communities where people can dive into their interests, hobbies and passions. There's a community for whatever you're interested in on Reddiit."
+          />
+          <meta property="og:title" content="reddiit" />
+          <meta property="twitter:title" content="reddiit" />
+          <meta property="og:site_name" content="reddiit" />
+          <meta property="og:type" content="website" />
+          <link
+            rel="shortcut icon"
+            href="/images/reddit-logo.svg"
+            type="image/x-icon"
+          />
           <link rel="preconnect" href="https://fonts.gstatic.com" />
           <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
           <link
