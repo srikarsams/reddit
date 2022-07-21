@@ -2,39 +2,69 @@
 import Link from 'next/link';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import { NextRouter, useRouter } from 'next/router';
 
 import { ActionButton } from '../action-button';
 import { ArrayElement } from '../../types';
 import { PostsWithVoteScore } from '../../pages/api/posts';
+import { useAuthState } from '../context';
+import { KeyedMutator } from 'swr';
 
 dayjs.extend(relativeTime);
 
-const voteHandler = async (id: string, value: number) => {
+const voteHandler = async (
+  id: string,
+  value: number,
+  authenticated: boolean,
+  router: NextRouter,
+  mutate?: KeyedMutator<PostWithVoteScoreAndUserVote[][]>
+) => {
+  if (!authenticated) router.push('/login');
   try {
-    const res = await fetch('/api/vote', {
+    await fetch('/api/vote', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ postId: id, value }),
     });
-  } catch (error) {}
+    if (mutate) mutate();
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export type PostWithVoteScoreAndUserVote = ArrayElement<PostsWithVoteScore> & {
   userVote: number;
 };
 
-export function PostCard({ post }: { post: PostWithVoteScoreAndUserVote }) {
+export function PostCard({
+  post,
+  mutate,
+}: {
+  post: PostWithVoteScoreAndUserVote;
+  mutate?: KeyedMutator<PostWithVoteScoreAndUserVote[][]>;
+}) {
+  const { authenticated } = useAuthState();
+  const router = useRouter();
   const postUrl = `/r/${post.subName}/${post.slug}`;
+
   return (
-    <div className="mb-4 flex rounded bg-white">
+    <div className="mb-4 flex rounded bg-white" id={post.identifier}>
       <div className="w-10 flex-shrink-0 rounded-l bg-gray-200 text-center">
         <div
           className={`mx-auto w-6 cursor-pointer rounded text-gray-400 hover:bg-gray-300 hover:text-red-500 ${
             post.userVote === 1 ? `text-red-500` : ''
           }`}
-          onClick={() => voteHandler(post.identifier, 1)}
+          onClick={() =>
+            voteHandler(
+              post.identifier,
+              1 === post.userVote ? 0 : 1,
+              authenticated,
+              router,
+              mutate
+            )
+          }
         >
           <i className="icon-arrow-up"></i>
         </div>
@@ -43,7 +73,15 @@ export function PostCard({ post }: { post: PostWithVoteScoreAndUserVote }) {
           className={`mx-auto w-6 cursor-pointer rounded text-gray-400 hover:bg-gray-300 hover:text-blue-600 ${
             post.userVote === -1 ? `text-blue-600` : ''
           }`}
-          onClick={() => voteHandler(post.identifier, -1)}
+          onClick={() =>
+            voteHandler(
+              post.identifier,
+              -1 === post.userVote ? 0 : -1,
+              authenticated,
+              router,
+              mutate
+            )
+          }
         >
           <i className="icon-arrow-down"></i>
         </div>

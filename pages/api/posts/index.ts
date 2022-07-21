@@ -9,7 +9,7 @@ import { setUserVoteForPost } from '../../../utils/set-user-vote';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{ posts: Post[] } | { error: string }>
+  res: NextApiResponse<Post[] | { error: string }>
 ) {
   if (req.method !== 'GET') {
     res.status(405).send({ error: 'Only GET requests allowed' });
@@ -17,26 +17,30 @@ export default async function handler(
   }
 
   try {
+    const page = parseInt((req.query.page || 0) as string);
+    const count = parseInt((req.query.count || 8) as string);
     const user = await fetchUserFromToken(req);
-    let posts = await fetchPosts();
+    let posts = await fetchPosts(page, count);
 
     // calculate the vote score for each post and remove votes data
     posts = posts.map((post) => {
       return setUserVoteForPost(post, user) as ArrayElement<PostsWithVoteScore>;
     });
 
-    res.status(200).json({ posts });
+    res.status(200).json(posts);
     return;
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
 }
 
-async function fetchPosts() {
+async function fetchPosts(page: number, count: number) {
   return await db.post.findMany({
     orderBy: {
       createdAt: 'desc',
     },
+    skip: count * page,
+    take: count,
     include: {
       votes: true,
       sub: true,

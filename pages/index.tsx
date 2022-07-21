@@ -2,8 +2,10 @@ import { Sub } from '@prisma/client';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import useSWR from 'swr';
+import useSWRInfinite from 'swr/infinite';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   PostCard,
@@ -12,22 +14,66 @@ import {
 import { useAuthState } from '../components/context';
 
 const Home: NextPage = () => {
-  const { data: posts } = useSWR<{ posts: PostWithVoteScoreAndUserVote[] }>(
-    '/api/posts'
-  );
   const { data: topSubs } =
     useSWR<(Sub & { _count: { posts: number } })[]>('/api/subs/top');
 
+  const {
+    data,
+    size: page,
+    setSize: setPage,
+    isValidating,
+    mutate,
+  } = useSWRInfinite<PostWithVoteScoreAndUserVote[]>(
+    (index) => `/api/posts?page=${index}`
+  );
+  const posts = useMemo(
+    () => (data ? ([] as PostWithVoteScoreAndUserVote[]).concat(...data) : []),
+    [data]
+  );
+
   const { authenticated } = useAuthState();
+  const [targetPost, setTargetPost] = useState('');
+
+  useEffect(() => {
+    if (!posts || !posts.length) return;
+    const id = posts[posts.length - 1].identifier;
+    if (id !== targetPost) setTargetPost(id);
+  }, [posts, targetPost]);
+
+  useEffect(() => {
+    const element = document.getElementById(targetPost);
+    if (!element) return;
+    observeTargetElement(element);
+  }, [targetPost]);
+
+  const observeTargetElement = (element: Element) => {
+    if (!element) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          observer.unobserve(element);
+          setPage(page + 1);
+        }
+      },
+      { threshold: 1 }
+    );
+    observer.observe(element);
+  };
 
   return (
     <>
       <Head>Reddiit: the front page of the internet</Head>
       <div className="container flex flex-col pt-4 md:flex-row">
         <div className="mx-auto basis-160 px-3 md:m-0 md:px-0">
-          {posts?.posts?.map((post) => {
-            return <PostCard post={post} key={post.id} />;
+          {isValidating && !posts.length ? (
+            <p className="text-center text-lg text-gray-500">Loading...</p>
+          ) : null}
+          {posts?.map((post) => {
+            return <PostCard post={post} key={post.id} mutate={mutate} />;
           })}
+          {isValidating && posts.length ? (
+            <p className="text-center text-lg text-gray-500">Loading...</p>
+          ) : null}
         </div>
         <div className="px-3 md:ml-6 md:basis-80 md:px-0">
           <div className="rounded bg-white">
