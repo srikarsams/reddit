@@ -1,4 +1,4 @@
-# Reddit Clone using NextJS
+# Reddit clone using NextJS and Prisma
 
 Built using NextJS, Prisma, SQLite, TypeScript and TailwindCSS (In Progress)
 
