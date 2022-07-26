@@ -14,6 +14,7 @@ import {
 import { useAuthState } from '../components/context';
 import { observeTargetElement } from '../utils/observer';
 import { LinkButton } from '../components/button';
+import { Loader } from '../components/loader';
 
 const Home: NextPage = () => {
   const { data: topSubs } =
@@ -58,15 +59,11 @@ const Home: NextPage = () => {
       </Head>
       <div className="container flex flex-col pt-4 md:flex-row">
         <div className="mx-auto basis-160 px-3 md:m-0 md:px-0">
-          {isInitialLoading ? (
-            <p className="text-center text-lg text-gray-500">Loading...</p>
-          ) : null}
+          {isInitialLoading ? <Loader /> : null}
           {posts?.map((post) => {
             return <PostCard post={post} key={post.id} mutate={mutate} />;
           })}
-          {isValidating && posts.length ? (
-            <p className="text-center text-lg text-gray-500">Loading...</p>
-          ) : null}
+          {isValidating && posts.length ? <Loader /> : null}
         </div>
         <div className="px-3 md:ml-6 md:basis-80 md:px-0">
           <div className="rounded bg-white">
@@ -94,7 +91,7 @@ const Home: NextPage = () => {
                 <Link href={`/r/${sub.name}`}>
                   <a className="ml-2 font-bold">r/{sub.name}</a>
                 </Link>
-                <p className="font-med ml-auto">{sub?._count?.posts}</p>
+                <p className="ml-auto font-medium">{sub?._count?.posts}</p>
               </div>
             ))}
             {authenticated ? (

@@ -13,6 +13,7 @@ import {
   useAuthDispatch,
   useAuthState,
 } from '../components/context';
+import { Button } from '../components/button';
 
 const Login: NextPage = () => {
   const [password, setPassword] = useState('123456');
@@ -90,13 +91,14 @@ const Login: NextPage = () => {
               }
               error={errObject?.fieldErrors?.password}
             />
-            <button
-              type="submit"
+            <Button
+              actionType="submit"
+              theme="primary"
               disabled={isLoading}
-              className={`my-4 w-full rounded bg-blue-500 py-3 text-xs font-bold uppercase text-white`}
+              customClass="my-4 w-full py-3 font-bold uppercase text-xs"
             >
               Login
-            </button>
+            </Button>
           </form>
           <small>
             New to Reddiit?

@@ -9,6 +9,7 @@ import { APIError, RegisterKeys } from '../types';
 import { Input } from '../components/input/index';
 import { User } from '@prisma/client';
 import { useAuthState } from '../components/context';
+import { Button } from '../components/button';
 
 const Register: NextPage = () => {
   const [email, setEmail] = useState('');
@@ -97,13 +98,14 @@ const Register: NextPage = () => {
               }
               error={errObject?.fieldErrors?.password}
             />
-            <button
-              type="submit"
+            <Button
+              actionType="submit"
+              theme="primary"
               disabled={isLoading}
-              className={`my-4 w-full rounded bg-blue-500 py-3 text-xs font-bold uppercase text-white`}
+              customClass="my-4 w-full py-3 font-bold uppercase text-xs"
             >
-              Sign Up
-            </button>
+              Sign up
+            </Button>
           </form>
           <small>
             Already a reddiitor?
