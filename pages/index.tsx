@@ -12,6 +12,7 @@ import {
   PostWithVoteScoreAndUserVote,
 } from '../components/post-card';
 import { useAuthState } from '../components/context';
+import { observeTargetElement } from '../utils/observer';
 
 const Home: NextPage = () => {
   const { data: topSubs } =
@@ -20,7 +21,6 @@ const Home: NextPage = () => {
   const {
     data,
     error,
-    size: page,
     setSize: setPage,
     isValidating,
     mutate,
@@ -35,6 +35,7 @@ const Home: NextPage = () => {
 
   const { authenticated } = useAuthState();
   const [targetPost, setTargetPost] = useState('');
+  const incrementPage = () => setPage((page) => page + 1);
 
   useEffect(() => {
     if (!posts || !posts.length) return;
@@ -45,22 +46,8 @@ const Home: NextPage = () => {
   useEffect(() => {
     const element = document.getElementById(targetPost);
     if (!element) return;
-    observeTargetElement(element);
-  }, [targetPost]);
-
-  const observeTargetElement = (element: Element) => {
-    if (!element) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          observer.unobserve(element);
-          setPage(page + 1);
-        }
-      },
-      { threshold: 1 }
-    );
-    observer.observe(element);
-  };
+    observeTargetElement(element, incrementPage);
+  }, [setPage, targetPost]);
 
   return (
     <>

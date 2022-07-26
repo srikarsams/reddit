@@ -20,5 +20,3 @@ npx prisma db seed
 ```
 yarn dev
 ```
-
-> Please feel free to raise an issue / PR 
