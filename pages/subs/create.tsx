@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from 'react';
 
 import { useAuthState } from '../../components/context';
 import { APIError, SubKeys } from '../../types';
+import { Button } from '../../components/button';
 
 export default function CreateSubPage() {
   const [name, setName] = useState('');
@@ -119,9 +120,13 @@ export default function CreateSubPage() {
             </div>
 
             <div className="flex justify-end">
-              <button className="blue button px-4 py-2" type="submit">
+              <Button
+                customClass="px-4 py-2"
+                theme="primary"
+                actionType="submit"
+              >
                 Create Community
-              </button>
+              </Button>
             </div>
           </form>
         </div>

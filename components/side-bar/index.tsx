@@ -2,6 +2,7 @@ import { Sub } from '@prisma/client';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import React from 'react';
+import { LinkButton } from '../button';
 import { useAuthState } from '../context';
 
 interface SideBarProps {
@@ -36,7 +37,9 @@ export function SideBar({ sub }: SideBarProps) {
 
           {authenticated && (
             <Link href={`/r/${sub.name}/submit`}>
-              <a className="blue button w-full py-1 text-sm">Create Post</a>
+              <LinkButton theme="primary" customClass="w-full text-sm">
+                Create Post
+              </LinkButton>
             </Link>
           )}
         </div>

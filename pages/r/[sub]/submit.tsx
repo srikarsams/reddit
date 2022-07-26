@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FormEvent, useEffect, useState } from 'react';
 import useSWR from 'swr';
+import { Button } from '../../../components/button';
 import { useAuthState } from '../../../components/context';
 
 import { SideBar } from '../../../components/side-bar';
@@ -85,13 +86,14 @@ export default function SubmitPage() {
               onChange={(e) => setBody(e.target.value)}
             />
             <div className="flex justify-end">
-              <button
-                className="blue button mt-2 px-3 py-1 text-sm"
-                type={'submit'}
+              <Button
+                theme="primary"
+                customClass="mt-2 px-3 py-1"
+                actionType={'submit'}
                 disabled={title.trim().length === 0}
               >
                 Submit
-              </button>
+              </Button>
             </div>
           </form>
         </div>

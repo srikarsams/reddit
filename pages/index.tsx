@@ -13,6 +13,7 @@ import {
 } from '../components/post-card';
 import { useAuthState } from '../components/context';
 import { observeTargetElement } from '../utils/observer';
+import { LinkButton } from '../components/button';
 
 const Home: NextPage = () => {
   const { data: topSubs } =
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
     const element = document.getElementById(targetPost);
     if (!element) return;
     observeTargetElement(element, incrementPage);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setPage, targetPost]);
 
   return (
@@ -98,9 +100,9 @@ const Home: NextPage = () => {
             {authenticated ? (
               <div className="border-t-2 p-4">
                 <Link href="/subs/create">
-                  <a className="button blue w-full px-2 py-2">
+                  <LinkButton theme="primary" customClass="w-full p-2">
                     Create community
-                  </a>
+                  </LinkButton>
                 </Link>
               </div>
             ) : null}

@@ -14,6 +14,7 @@ import { PostsWithVoteScore } from '../../api/posts';
 import { useAuthState } from '../../../components/context';
 import { SideBar } from '../../../components/side-bar';
 import { ActionButton } from '../../../components/action-button';
+import { Button, LinkButton } from '../../../components/button';
 
 dayjs.extend(relativeTime);
 
@@ -205,12 +206,13 @@ export default function PostPage() {
                           onChange={(e) => setCommentText(e.target.value)}
                         />
                         <div className="flex justify-end">
-                          <button
-                            className="blue button px-3 py-2"
+                          <Button
+                            customClass="px-3 py-2"
+                            theme="primary"
                             disabled={!commentText}
                           >
                             Comment
-                          </button>
+                          </Button>
                         </div>
                       </form>
                     </div>
@@ -221,12 +223,17 @@ export default function PostPage() {
                       </p>
                       <div className="mx-auto mt-2 lg:m-0">
                         <Link href="/login">
-                          <a className="blue button mr-4 px-4 py-1 outline">
+                          <LinkButton
+                            theme="outline"
+                            customClass="mr-4 px-4 py-1"
+                          >
                             Login
-                          </a>
+                          </LinkButton>
                         </Link>
                         <Link href="/register">
-                          <a className="blue button px-4 py-1">Sign Up</a>
+                          <LinkButton theme="primary" customClass="px-4 py-1">
+                            Sign Up
+                          </LinkButton>
                         </Link>
                       </div>
                     </div>

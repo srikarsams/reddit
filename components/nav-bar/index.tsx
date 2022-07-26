@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { throttle } from '../../utils/throttle';
+import { Button, LinkButton } from '../button';
 
 import { ACTION_CONSTANTS, useAuthDispatch, useAuthState } from '../context';
 
@@ -109,24 +110,31 @@ const NavBar = () => {
         >
           {!authState.authenticated ? (
             <>
-              <Link href="/login">
-                <a className="blue button mr-1 basis-32 px-2 py-1 leading-5 outline sm:mr-4 sm:px-0">
+              <Link href="/login" passHref>
+                <LinkButton
+                  theme="outline"
+                  customClass="mr-1 basis-32 leading-5 sm:mr-4 sm:px-0"
+                >
                   Log in
-                </a>
+                </LinkButton>
               </Link>
-              <Link href="/register">
-                <a className="blue button hidden basis-32 py-1 px-2 leading-5 sm:block sm:px-0">
+              <Link href="/register" passHref>
+                <LinkButton
+                  theme="primary"
+                  customClass="hidden basis-32 leading-5 sm:block sm:px-0"
+                >
                   Register
-                </a>
+                </LinkButton>
               </Link>
             </>
           ) : (
-            <button
-              className="blue button basis-32 px-2 py-1 leading-5 outline sm:px-0"
+            <Button
+              theme="outline"
+              customClass="basis-32 leading-5 sm:px-0"
               onClick={logout}
             >
               Logout
-            </button>
+            </Button>
           )}
         </div>
       ) : null}
